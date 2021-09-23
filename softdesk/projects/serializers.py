@@ -1,13 +1,8 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from projects.models import Projects, Issues, Contributors, Comments
-
-"""
-class UserSerialiser(serializers.ModelSerializer):
-    class Meta:
-        model = Users
-        fields = '__all__'
-"""
+from rest_framework.serializers import HyperlinkedModelSerializer
+from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 
 class ProjectSerialiser(serializers.ModelSerializer):
@@ -29,6 +24,7 @@ class ContributorSerialiser(serializers.ModelSerializer):
 
 
 class CommentSerialiser(serializers.ModelSerializer):
+
     class Meta:
         model = Comments
         fields = '__all__'

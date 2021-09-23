@@ -14,7 +14,7 @@ class ContributorsAdmin(admin.ModelAdmin):
 
 
 @admin.register(Comments)
-class ProjectsAdmin(admin.ModelAdmin):
+class CommentsAdmin(admin.ModelAdmin):
     list_display = ['description', 'issue_id']
 
 
