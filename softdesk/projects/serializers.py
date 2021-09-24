@@ -1,8 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from projects.models import Projects, Issues, Contributors, Comments
-from rest_framework.serializers import HyperlinkedModelSerializer
-from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 
 class ProjectSerialiser(serializers.ModelSerializer):
