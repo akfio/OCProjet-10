@@ -1,4 +1,4 @@
-Développez une application Web en utilisant Django
+Créez une API sécurisée RESTful en utilisant Django REST
 ----------------------------------------------------------------------------------------------
 
 ## Installation
