@@ -11,6 +11,10 @@ cd projet10
 ```
 Placer le dossier softdesk dedans.
 
+```python
+gh repo clone akfio/OCProjet-10
+```
+
 créez un environnement virtuel dans le dossier projet10 (ici nommé env):
 ```python
 python3 -m venv env
