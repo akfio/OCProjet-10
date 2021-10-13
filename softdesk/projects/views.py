@@ -1,4 +1,4 @@
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, SAFE_METHODS
 from rest_framework import viewsets, generics
 from .models import Projects, Issues, Comments, Contributors
 from .serializers import ProjectSerialiser, IssueSerialiser, CommentSerialiser, ContributorSerialiser
@@ -43,12 +43,12 @@ class IssueViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer_class):
         projet = Projects.objects.get(project_id=self.kwargs["project_pk"])
-        contributor = Contributors.objects.create(user_id=self.request.user, project_id=projet)
-        serializer_class.save(project_id=projet, author_user_id=self.request.user, assignee_user_id=contributor)
+        contributor = Contributors.objects.get_or_create(user_id=self.request.user, project_id=projet)
+        serializer_class.save(project_id=projet, author_user_id=self.request.user, assignee_user_id=contributor[0])
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    permission_classes = [AuthorPermission]
+    permission_classes = (IsAuthenticated,)
 
     queryset = Comments.objects.all()
     serializer_class = CommentSerialiser
@@ -63,15 +63,30 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 
 class ContributorViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [AuthorPermission]
 
     queryset = Contributors.objects.all()
     serializer_class = ContributorSerialiser
 
     def get_queryset(self):
-        contributor = self.queryset.filter(project_id=self.kwargs["project_pk"])
-        return contributor
+        query = Projects.objects.all()
+        contributor = query.filter(contributor=self.request.user, project_id=self.kwargs["project_pk"])
+        author = query.filter(author_user_id=self.request.user, project_id=self.kwargs["project_pk"])
+        if author.exists():
+            if contributor.exists():
+                contribut = self.queryset.filter(project_id=self.kwargs["project_pk"])
+                return contribut
+            else:
+                contribut = self.queryset.filter(project_id=self.kwargs["project_pk"])
+                return contribut
+        else:
+            if contributor.exists():
+                contribut = self.queryset.filter(project_id=self.kwargs["project_pk"])
+                return contribut
 
     def perform_create(self, serializer_class):
-        projet = Projects.objects.get(project_id=self.kwargs["project_pk"])
-        serializer_class.save(project_id=projet)
+        query = Projects.objects.all()
+        author = query.filter(author_user_id=self.request.user, project_id=self.kwargs["project_pk"])
+        if author.exists():
+            projet = Projects.objects.get(project_id=self.kwargs["project_pk"])
+            serializer_class.save(project_id=projet)
